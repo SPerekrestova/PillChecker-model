@@ -1,0 +1,79 @@
+openapi: 3.0.0
+info:
+  title: Medical NER Service API
+  description: A service for medical named entity recognition and linking
+  version: 0.1.0
+servers:
+  - url: http://localhost:8081
+    description: Local development server
+paths:
+  /api/extract_entities:
+    post:
+      summary: Extract medical entities from text
+      description: Process the input text and return recognized medical entities along with linked knowledge base information.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - text
+              properties:
+                text:
+                  type: string
+                  description: Medical text to analyze
+      responses:
+        '200':
+          description: The recognized entities with their details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  entities:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        text:
+                          type: string
+                          description: The recognized entity text
+                        umls_entities:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              canonical_name:
+                                type: string
+                                description: Canonical name of the entity
+                              definition:
+                                type: string
+                                description: Definition of the entity
+                                nullable: true
+                              aliases:
+                                type: array
+                                items:
+                                  type: string
+                                description: Alternative names for the entity
+        '500':
+          description: Error processing text
+  /api/health:
+    get:
+      summary: Health check endpoint
+      description: Verify the service status and model availability
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum: [ok]
+                  message:
+                    type: string
+        '503':
+          description: Service is unhealthy
