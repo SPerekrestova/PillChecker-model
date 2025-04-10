@@ -8,29 +8,31 @@ version = "0.1.0"
 description = "Medical NER & Linking Service"
 requires-python = ">=3.9"
 dependencies = [
-    "fastapi>=0.112.2",
-    "uvicorn>=0.34.0",
-    "spacy>=3.7.4",
-    "scispacy>=0.5.4",
-    "pydantic>=2.10.5",
-    "pydantic-settings>=2.0.0",
-    "httpx>=0.28.1",
+    "fastapi==0.112.2",
+    "uvicorn==0.34.0",
+    "spacy==3.7.4",
+    "scispacy==0.5.4",
+    "pydantic==2.10.5",
+    "pydantic-settings==2.0.0",
+    "httpx==0.28.1",
+    "https://s3-us-west-2.amazonaws.com/ai2-s2-scispacy/releases/v0.5.4/en_ner_bc5cdr_md-0.5.4.tar.gz"
 ]
 
 [project.optional-dependencies]
 dev = [
-    "pytest>=7.4.0",
-    "pytest-cov>=4.1.0",
-    "black>=23.1.0",
-    "isort>=5.12.0",
-    "ruff>=0.0.254",
-    "pre-commit>=3.2.0",
+    "pytest==7.4.0",
+    "pytest-cov==4.1.0",
+    "black==23.1.0",
+    "isort==5.12.0",
+    "ruff==0.0.254",
+    "pre-commit==3.2.0",
 ]
 
 [tool.ruff]
 target-version = "py39"
 line-length = 100
 select = ["E", "F", "B", "I"]
+ignore = ["E501", "B904", "B008"]
 
 [tool.black]
 line-length = 100

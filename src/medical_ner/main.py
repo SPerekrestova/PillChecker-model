@@ -1,15 +1,14 @@
 import logging
+import time
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from medical_ner.core.logging import configure_logging
 
 from .api.router import router
 from .core.config import settings
 from .services.nlp import get_nlp_model
-from fastapi import Request
-import time
 
 # Configure logging before anything else
 configure_logging()
@@ -54,6 +53,7 @@ def create_application() -> FastAPI:
 
 app = create_application()
 
+
 @app.middleware("http")
 async def add_process_time_header(request: Request, call_next):
     start_time = time.time()
@@ -62,9 +62,8 @@ async def add_process_time_header(request: Request, call_next):
     response.headers["X-Process-Time"] = str(process_time)
     return response
 
+
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run(
-        "medical_ner.main:app", host="0.0.0.0", port=8081, reload=settings.DEBUG
-    )
+    uvicorn.run("medical_ner.main:app", host="0.0.0.0", port=8081, reload=settings.DEBUG)

@@ -20,9 +20,7 @@ def configure_logging() -> None:
     log_level = getattr(logging, settings.LOG_LEVEL.upper(), logging.INFO)
 
     # Create formatters
-    simple_formatter = logging.Formatter(
-        "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-    )
+    simple_formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
     detailed_formatter = logging.Formatter(
         "%(asctime)s - %(name)s - %(levelname)s - %(pathname)s:%(lineno)d - %(message)s"
     )

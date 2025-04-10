@@ -153,20 +153,14 @@ class RxNormClient:
                             details = RxNormClient.get_drug_details(rxcui)
                             if details and "allRelatedGroup" in details:
                                 # Extract information from related groups
-                                for related_group in details["allRelatedGroup"][
-                                    "conceptGroup"
-                                ]:
+                                for related_group in details["allRelatedGroup"]["conceptGroup"]:
                                     if "conceptProperties" in related_group:
                                         for prop in related_group["conceptProperties"]:
                                             if related_group["tty"] == "SY":  # Synonym
                                                 synonyms.append(prop["name"])
-                                            elif (
-                                                related_group["tty"] == "BN"
-                                            ):  # Brand name
+                                            elif related_group["tty"] == "BN":  # Brand name
                                                 brand_names.append(prop["name"])
-                                            elif (
-                                                related_group["tty"] == "IN"
-                                            ):  # Ingredient
+                                            elif related_group["tty"] == "IN":  # Ingredient
                                                 related_drugs.append(prop["name"])
 
         # Create entity detail

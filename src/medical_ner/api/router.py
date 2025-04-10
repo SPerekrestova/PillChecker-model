@@ -12,11 +12,13 @@ logger = get_logger(__name__)
 
 
 # In router.py, enhance documentation
-@router.post("/extract_entities",
-             response_model=EntityResponse,
-             summary="Extract medical entities from text",
-             description="Process the input text and return recognized medical entities along with linked knowledge base information.",
-             response_description="The recognized entities with their details")
+@router.post(
+    "/extract_entities",
+    response_model=EntityResponse,
+    summary="Extract medical entities from text",
+    description="Process the input text and return recognized medical entities along with linked knowledge base information.",
+    response_description="The recognized entities with their details",
+)
 def extract_entities(req: TextRequest, nlp=Depends(get_nlp_model)) -> EntityResponse:
     """
     Process the input text and return recognized entities along with their medical details.
@@ -43,10 +45,6 @@ def health_check(nlp=Depends(get_nlp_model)) -> Dict[str, str]:
     try:
         # Test the model with a simple string
         nlp("test")
-        return HealthResponse(
-            status="ok", message="Service is healthy, model is loaded"
-        )
+        return HealthResponse(status="ok", message="Service is healthy, model is loaded")
     except Exception as e:
-        raise HTTPException(
-            status_code=503, detail=f"Model not properly loaded: {str(e)}"
-        )
+        raise HTTPException(status_code=503, detail=f"Model not properly loaded: {str(e)}")
