@@ -2,8 +2,6 @@ from unittest.mock import patch
 
 import pytest
 from fastapi import HTTPException
-from medical_ner.main import app
-from medical_ner.services.nlp import get_nlp_model
 
 
 def test_health_endpoint(client):
@@ -67,8 +65,8 @@ def test_health_check_failure():
     # Direct patch of the function call is fine for this case
     # because we're calling the function directly, not through FastAPI
     with patch(
-            "medical_ner.api.router.get_nlp_model",
-            side_effect=Exception("Model failed to load"),
+        "medical_ner.api.router.get_nlp_model",
+        side_effect=Exception("Model failed to load"),
     ):
         # Should raise an HTTP exception with 503 status code
         with pytest.raises(HTTPException) as excinfo:

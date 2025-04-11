@@ -14,8 +14,7 @@ dependencies = [
     "scispacy==0.5.4",
     "pydantic==2.10.5",
     "pydantic-settings==2.0.0",
-    "httpx==0.28.1",
-    "https://s3-us-west-2.amazonaws.com/ai2-s2-scispacy/releases/v0.5.4/en_ner_bc5cdr_md-0.5.4.tar.gz"
+    "httpx==0.28.1"
 ]
 
 [project.optional-dependencies]

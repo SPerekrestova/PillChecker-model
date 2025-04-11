@@ -1,5 +1,6 @@
 import pytest
 from fastapi.testclient import TestClient
+
 from medical_ner.main import app
 from medical_ner.services.nlp import get_nlp_model
 
