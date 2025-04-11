@@ -33,7 +33,6 @@ def get_nlp_model() -> Language:
         except ImportError:
             logger.warning("Could not import AbbreviationDetector. Skipping.")
 
-
         logger.info(f"Adding entity linker for {settings.LINKER_NAME}...")
         try:
             from scispacy.linking import EntityLinker  # noqa: F401

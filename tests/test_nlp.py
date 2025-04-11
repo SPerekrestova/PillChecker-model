@@ -5,6 +5,7 @@ Tests for the NLP service functionality.
 from unittest.mock import MagicMock, patch
 
 import pytest
+
 from medical_ner.services.nlp import get_nlp_model
 
 
@@ -25,7 +26,9 @@ def test_nlp_model_loading():
         # Verify that required pipes are present
         assert "ner" in model.pipe_names
         # Test presence of linker more defensively
-        assert "scispacy_linker" in model.pipe_names or any("linker" in pipe for pipe in model.pipe_names)
+        assert "scispacy_linker" in model.pipe_names or any(
+            "linker" in pipe for pipe in model.pipe_names
+        )
     except (ImportError, OSError) as e:
         pytest.skip(f"Model not available: {e}")
 
@@ -113,9 +116,12 @@ def test_nlp_abbreviation_detection():
 
         # Make assertion more flexible - sometimes abbreviation detection might vary
         if len(abbreviations) > 0:
-            assert any(
-                abbr._.long_form.text.lower() == "chronic obstructive pulmonary disease"
-                for abbr in abbreviations
-            ) or True  # Don't fail if model detects but doesn't match exactly
+            assert (
+                any(
+                    abbr._.long_form.text.lower() == "chronic obstructive pulmonary disease"
+                    for abbr in abbreviations
+                )
+                or True
+            )  # Don't fail if model detects but doesn't match exactly
     except (ImportError, OSError, AttributeError) as e:
         pytest.skip(f"Abbreviation detection not available: {e}")
