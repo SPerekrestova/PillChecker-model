@@ -25,16 +25,19 @@ def get_nlp_model() -> Language:
         logger.info(f"Loading model {settings.SPACY_MODEL}...")
         model = spacy.load(settings.SPACY_MODEL)
 
-        # Add abbreviation detector
         logger.info("Adding abbreviation detector...")
         try:
+            from scispacy.abbreviation import AbbreviationDetector  # noqa: F401
+
             model.add_pipe("abbreviation_detector")
         except ImportError:
             logger.warning("Could not import AbbreviationDetector. Skipping.")
 
-        # Add entity linker
+
         logger.info(f"Adding entity linker for {settings.LINKER_NAME}...")
         try:
+            from scispacy.linking import EntityLinker  # noqa: F401
+
             model.add_pipe(
                 "scispacy_linker",
                 config={
