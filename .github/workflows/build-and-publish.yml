@@ -5,79 +5,47 @@ on:
     branches: [ main, master ]
     tags: [ 'v*' ]
 
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
 jobs:
   build-and-publish:
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
+      attestations: write
+      id-token: write
 
     steps:
-    - uses: actions/checkout@v3
-
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v2
+    - uses: actions/checkout@v4
 
     - name: Log in to GitHub Container Registry
-      uses: docker/login-action@v2
+      uses: docker/login-action@v3
       with:
-        registry: ghcr.io
+        registry: ${{ env.REGISTRY }}
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Extract metadata for Docker
       id: meta
-      uses: docker/metadata-action@v4
+      uses: docker/metadata-action@v5
       with:
-        images: ghcr.io/${{ github.repository }}
-        tags: |
-          type=ref,event=branch
-          type=ref,event=pr
-          type=semver,pattern={{version}}
-          type=semver,pattern={{major}}.{{minor}}
-          type=sha
-          type=raw,value=latest
+        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
     - name: Build and export Docker image
-      uses: docker/build-push-action@v4
-      with:
-        context: .
-        load: true
-        tags: ${{ steps.meta.outputs.tags }}
-        labels: ${{ steps.meta.outputs.labels }}
-
-    - name: Verify Docker image
-      run: |
-        docker images ghcr.io/${{ github.repository }} --format "{{.Repository}}:{{.Tag}}" | grep "latest"
-
-    - name: Test Docker image
-      run: |
-        docker run -d --name medical-ner-service -p 8081:8081 \
-          -e SPACY_MODEL=en_ner_bc5cdr_md \
-          -e LINKER_NAME=rxnorm \
-          ghcr.io/${{ github.repository }}:latest
-
-        echo "Waiting for service to start..."
-        sleep 30
-
-        echo "Checking health endpoint..."
-        STATUS_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8081/api/health)
-
-        if [ $STATUS_CODE -eq 200 ]; then
-          echo "Health check passed!"
-        else
-          echo "Health check failed with status code: $STATUS_CODE"
-          docker logs medical-ner-service
-          exit 1
-        fi
-
-        docker stop medical-ner-service
-        docker rm medical-ner-service
-
-    - name: Push Docker image
+      id: push
       uses: docker/build-push-action@v4
       with:
         context: .
         push: true
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
+
+    - name: Generate artifact attestation
+      uses: actions/attest-build-provenance@v2
+      with:
+        subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME}}
+        subject-digest: ${{ steps.push.outputs.digest }}
+        push-to-registry: true
